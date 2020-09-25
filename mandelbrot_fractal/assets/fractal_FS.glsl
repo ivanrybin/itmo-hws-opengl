@@ -58,7 +58,7 @@ void main() {
     x = 0; y = 0;
     int i = 0;
     for (; i < iters_cnt && (x * x + y * y <= 4.0); ++i) {
-        x = z.x * z.x - z.y * z.y + c.x;
+        x =  z.x * z.x - z.y * z.y + c.x;
         y = 2.0f * z.x * z.y + c.y;
         z.x = x; z.y = y;
     }

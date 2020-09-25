@@ -38,6 +38,13 @@ void init_rectangle(GLuint& VBO, GLuint& VAO, GLuint& EBO) {
              1.0f,  1.0f, 0.0f, //  2       |        |
             -1.0f,  1.0f, 0.0f, //  3       0 ------ 1
     };
+//    constexpr float vertices[] {
+//            -0.5f, -0.5f, 0.0f, //  0       3 ------ 2
+//             0.5f, -0.5f, 0.0f, //  1       |        |
+//             0.5f,  0.5f, 0.0f, //  2       |        |
+//            -0.5f,  0.5f, 0.0f, //  3       0 ------ 1
+//    };
+
     unsigned int indices[6] = {
             0, 1, 2, // первый
             0, 2, 3  // второй
@@ -68,35 +75,58 @@ void process_input(GLFWwindow *window) {
 }
 
 const unsigned int WIN_WIDTH  = 1280;
-const unsigned int WIN_HEIGHT = 720;
+const unsigned int WIN_HEIGHT =  720;
 
 bool is_start = true;
 double x_prev, y_prev;
-double sensitive = 1;
-
+double x_last, y_last;
 
 struct mandelbrot {
     void change_coords(float x_offset, float y_offset) {
-        x -= x_offset * (3.0f / WIN_WIDTH);
-        y -= y_offset * (1.5f / WIN_HEIGHT);
+        x_left -= (x_offset / WIN_WIDTH) * (x_right - x_left);
+        x_right -= (x_offset / WIN_WIDTH) * (x_right - x_left);
+
+        y_down -= (y_offset / WIN_HEIGHT) * (y_up - y_down);
+        y_up -= (y_offset / WIN_HEIGHT) * (y_up - y_down);
+
     }
-    void change_scale(float delta) {
-        scale -= 0.1f * scale * delta;
-        sensitive -= 0.1f * sensitive * delta;
+    void change_scale(float sign) {
+        float x1_left = (x_last / WIN_WIDTH) * (x_right - x_left);
+        float x1_right = (WIN_WIDTH - x_last) / WIN_WIDTH * (x_right - x_left);
+        float y1_up = (y_last / WIN_HEIGHT) * (y_up - y_down);
+        float y1_down = (WIN_HEIGHT - y_last) / WIN_HEIGHT * (y_up - y_down);
+
+        if (sign > 0) {
+            x_left = (x_left + x1_left * 0.1);
+            x_right = (x_right - x1_right * 0.1);
+            y_up = (y_up - y1_up * 0.1);
+            y_down = (y_down + y1_down * 0.1);
+        } else {
+            x_left = (x_left - x1_left / 9);
+            x_right = (x_right + x1_right / 9);
+            y_up = (y_up + y1_up / 9);
+            y_down = (y_down - y1_down / 9);
+        }
+
     }
     float scale;
     float x, y;
+    float x_left, x_right;
+    float y_down, y_up;
     unsigned int iters_cnt;
 };
 
 // create mandelbrot fractal
-mandelbrot m_data{1.0f, 0.0f, 0.0f, 40};
+mandelbrot m_data{1.0f, 0.0f, 0.0f, -2.0f, 1.0f, -1.0f, 1.0f, 40};
 
 void mouse_callback(GLFWwindow* window, double x_curr, double y_curr) {
     // пропуск мыши на окне imgui
     if (ImGui::IsAnyWindowHovered() || ImGui::IsAnyItemHovered() || ImGui::IsAnyItemActive()) {
         return;
     }
+
+    x_last = x_curr;
+    y_last = y_curr;
 
     if (glfwGetMouseButton(window, 0) != GLFW_PRESS) {
         x_prev = x_curr;
@@ -111,7 +141,7 @@ void mouse_callback(GLFWwindow* window, double x_curr, double y_curr) {
     x_prev = x_curr;
     y_prev = y_curr;
 
-    m_data.change_coords(x_offset * sensitive, y_offset * sensitive);
+    m_data.change_coords(x_offset, y_offset);
 }
 
 void scroll_callback(GLFWwindow* window, double x_offset, double y_offset) {
@@ -189,13 +219,12 @@ int main(int, char **) {
         ImGui::SliderInt("color offset", &color_offset, 50, 100);
         ImGui::End();
 
-        // выставляем полученное из ImGUI число итераций
         m_data.iters_cnt = iterations;
 
         // направляем данные в Fragment SHADER
         program_1.set_vec2("rect_size", glm::vec2(WIN_WIDTH, WIN_HEIGHT));
-        program_1.set_vec2("area_w",  glm::vec2(-2.0f * m_data.scale + m_data.x, 1.0f * m_data.scale + m_data.x));
-        program_1.set_vec2("area_h",  glm::vec2(-1.0f * m_data.scale + m_data.y, 1.0f * m_data.scale + m_data.y));
+        program_1.set_vec2("area_w",  glm::vec2(m_data.x_left + m_data.x,  m_data.x_right + m_data.x));
+        program_1.set_vec2("area_h",  glm::vec2(m_data.y_down + m_data.y,     m_data.y_up + m_data.y));
         program_1.set_uniform("iters_cnt", m_data.iters_cnt);
         program_1.set_uniform("color_offset", color_offset);
 
