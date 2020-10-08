@@ -1,5 +1,4 @@
-OpenGL simple app
-* 3.3 core profile
-* prereqs - conan, cmake
-* deps - glfw, glew, imgui, glm
-* run.cmd/run.sh
+# HW2 - Model .obj refraction/reflection
+
+![](pictures/picture_1.png)
+![](pictures/picture_2.png)
