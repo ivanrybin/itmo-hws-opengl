@@ -187,7 +187,7 @@ int main() {
 //        ImGui::SliderInt("R", &RC, 0, 255);
 //        ImGui::SliderInt("G", &GC, 0, 255);
 //        ImGui::SliderInt("B", &BC, 0, 255);
-        ImGui::Checkbox("just color", &is_color);
+        // ImGui::Checkbox("just color", &is_color);
         ImGui::SliderFloat("refraction value", &refraction, 1.0f, 3.0f);
         ImGui::SliderFloat("reflection percent", &refl_weight, 0.0f, 1.0f);
         ImGui::SliderFloat("refraction percent", &refr_weight, 0.0f, 1.0f);
