@@ -24,13 +24,14 @@ void main() {
 
     vec4 REFL = texture(skybox, reflect(I, normalize(Normal)));
     vec4 REFR = texture(skybox, refract(I, normalize(Normal), ratio));
-    vec4 COLR = texture(texture_diffuse, TexCoords);
+    
+//    vec4 COLR = texture(texture_diffuse, TexCoords);
+//
+//    float COLR_WEIGHT = 1.0f - REFL_WEIGHT - REFR_WEIGHT;
+//    if (COLR_WEIGHT < 0) {
+//        COLR_WEIGHT = 0;
+//    }
 
-    float COLR_WEIGHT = 1.0f - REFL_WEIGHT - REFR_WEIGHT;
-    if (COLR_WEIGHT < 0) {
-        COLR_WEIGHT = 0;
-    }
-
-    FragColor = REFL_WEIGHT * REFL + REFR_WEIGHT * REFR + COLR_WEIGHT * COLR;
+    FragColor = REFL_WEIGHT * REFL + REFR_WEIGHT * REFR; // + COLR_WEIGHT * COLR;
 }
 

@@ -152,8 +152,8 @@ int main() {
     bool is_polygons = false;   // polygons
     int RC = 1, GC = 0, BC = 0; // colors background
     float refraction = 1.5f;
-    float refr_weight = 0.0f;
     float refl_weight = 0.0f;
+    float refr_weight = 0.5f;
     bool is_color = true;
 
     PROGRAM.use();
@@ -187,7 +187,6 @@ int main() {
 //        ImGui::SliderInt("R", &RC, 0, 255);
 //        ImGui::SliderInt("G", &GC, 0, 255);
 //        ImGui::SliderInt("B", &BC, 0, 255);
-        // ImGui::Checkbox("just color", &is_color);
         ImGui::SliderFloat("refraction value", &refraction, 1.0f, 3.0f);
         ImGui::SliderFloat("reflection percent", &refl_weight, 0.0f, 1.0f);
         ImGui::SliderFloat("refraction percent", &refr_weight, 0.0f, 1.0f);
@@ -220,7 +219,8 @@ int main() {
         glDepthFunc(GL_LEQUAL);  // меняем функцию глубины, чтобы обеспечить прохождение теста глубины, когда значения равны содержимому буфера глубины
 
         SKYBOX_SHADER.use();
-        SKYBOX_SHADER.set_mat4("view", view);
+        view = glm::mat3(view);
+        SKYBOX_SHADER.set_mat4("view", glm::mat4(view));
         SKYBOX_SHADER.set_mat4("projection", projection);
 
         // куб скайбокса
