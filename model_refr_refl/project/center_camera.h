@@ -60,12 +60,12 @@ namespace camera {
 
         // Обрабатывает входные данные, полученные от события колеса прокрутки мыши. Интересуют только входные данные на вертикальную ось колесика
         void process_mouse_scroll(float yoffset) {
-            if (zoom >= 44.2f && zoom <= 46.8f) {
+            if (zoom >= 44.1f && zoom <= 47.0f) {
                 zoom -= yoffset * 0.05;
-            } else if (zoom <= 44.2f) {
-                zoom = 44.2f;
-            } else if (zoom >= 46.8f) {
-                zoom = 46.8f;
+            } else if (zoom <= 44.1f) {
+                zoom = 44.1f;
+            } else if (zoom >= 47.0f) {
+                zoom = 47.0f;
             }
         }
     private:
