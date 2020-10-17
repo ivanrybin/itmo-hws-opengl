@@ -151,10 +151,10 @@ int main() {
     // ImGUI PARAMETERS ----------------------------------------------------------------------------------
     bool is_polygons = false;   // polygons
     int RC = 1, GC = 0, BC = 0; // colors background
-    float refraction = 1.5f;
-    float refl_weight = 0.0f;
-    float refr_weight = 0.5f;
-    bool is_color = true;
+
+    float n1 = 1.0;
+    float n2 = 1.5;
+    float color_percent = 0.1;
 
     PROGRAM.use();
     PROGRAM.set_uniform<int>("skybox", 0);
@@ -184,9 +184,9 @@ int main() {
         ImGui::Begin("Parameters");
         ImGui::Checkbox("polygons", &is_polygons);
         (is_polygons) ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        ImGui::SliderFloat("refraction value", &refraction, 1.0f, 3.0f);
-        ImGui::SliderFloat("reflection percent", &refl_weight, 0.0f, 1.0f);
-        ImGui::SliderFloat("refraction percent", &refr_weight, 0.0f, 1.0f);
+        ImGui::SliderFloat("color percent", &color_percent, 0.0f, 1.0f);
+        ImGui::SliderFloat("world refractive idx", &n1, -10.0f, 10.0f);
+        ImGui::SliderFloat("model refractive idx", &n2, -10.0f, 10.0f);
 
         ImGui::End();
         // ImGUI - END
@@ -195,18 +195,17 @@ int main() {
         PROGRAM.use();
 
         glm::mat4 view = center_camera.get_view_matrix();
-        glm::mat4 model = glm::scale(glm::vec3(0.05f));
-        glm::mat4 projection = glm::perspective<float>(center_camera.zoom, (float) WIN_WIDTH / (float) WIN_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 model = glm::scale(glm::vec3(center_camera.zoom, center_camera.zoom, center_camera.zoom));
+        glm::mat4 projection = glm::perspective<float>(45, (float) WIN_WIDTH / (float) WIN_HEIGHT, 0.1f, 100.0f);
 
         PROGRAM.set_mat4("view", view);
         PROGRAM.set_mat4("model", model);
         PROGRAM.set_mat4("projection", projection);
         PROGRAM.set_vec3("cameraPos", glm::vec3(center_camera.position));
 
-        PROGRAM.set_uniform<float>("refraction", refraction);
-        PROGRAM.set_uniform<float>("REFL_WEIGHT", refl_weight);
-        PROGRAM.set_uniform<float>("REFR_WEIGHT", refr_weight);
-        PROGRAM.set_uniform<bool>("IS_COLOR", is_color);
+        PROGRAM.set_uniform<float>("color_percent", color_percent);
+        PROGRAM.set_uniform<float>("n1", n1);
+        PROGRAM.set_uniform<float>("n2", n2);
 
         // MODEL DRAW---------------------------------------
         model1.draw(PROGRAM);

@@ -19,7 +19,7 @@ namespace camera {
     const float PITCH = 0.0f;
     const float SPEED = 2.5f;
     const float SENSITIVITY = 0.3f;
-    const float ZOOM = 45.0f;
+    const float ZOOM = 0.3f;
 
     class camera {
     public:
@@ -29,7 +29,7 @@ namespace camera {
         float pitch;    // тангаж (X)
         float zoom;
 
-        camera(glm::vec4 position = glm::vec4(0.0f, 0.0f, 0.3f, 1.0f),
+        camera(glm::vec4 position = glm::vec4(0.0f, 0.0f, 5.0f, 1.0f),
                glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f))
                 : position(position)
                 , up(up)
@@ -60,17 +60,20 @@ namespace camera {
 
         // Обрабатывает входные данные, полученные от события колеса прокрутки мыши. Интересуют только входные данные на вертикальную ось колесика
         void process_mouse_scroll(float yoffset) {
-            if (zoom >= 44.1f && zoom <= 47.0f) {
-                zoom -= yoffset * 0.05;
-            } else if (zoom <= 44.1f) {
-                zoom = 44.1f;
-            } else if (zoom >= 47.0f) {
-                zoom = 47.0f;
-            }
+            zoom = (zoom < 0.01f) ? 0.01f : (zoom + yoffset * 0.01f);
+//
+//            std::cout << zoom << std::endl;
+//            if (zoom >= 30.0f && zoom <= 150.0f) {
+//                zoom -= yoffset * 0.05;
+//            } else if (zoom <= 30.0f) {
+//                zoom = 30.0f;
+//            } else if (zoom >= 150.0f) {
+//                zoom = 150.0f;
+//            }
         }
     private:
         void update_camera_vecs() {
-            position = glm::vec4(0, 0, 0.3, 1);
+            position = glm::vec4(0, 0, 5.0f, 1);
             glm::mat4 rotation_y =  glm::rotate(glm::mat4(1.0f), glm::radians(yaw), glm::vec3(0, 1, 0));
             glm::mat4 rotation_x = glm::rotate(glm::mat4(1.0f), glm::radians(pitch), glm::vec3(rotation_y * glm::vec4(1, 0, 0, 1)));
             position = rotation_x * (rotation_y * position);
