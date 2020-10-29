@@ -157,10 +157,10 @@ int main() {
     float color_percent = 0.1;
 
     PROGRAM.use();
-    PROGRAM.set_uniform<int>("skybox", 0);
+    PROGRAM.set_uniform<int>("skybox", cubemapTexture);
 
     SKYBOX_SHADER.use();
-    SKYBOX_SHADER.set_uniform<int>("skybox", 0);
+    SKYBOX_SHADER.set_uniform<int>("skybox", cubemapTexture);
 
     // Z-TEST
     glEnable(GL_DEPTH_TEST);
@@ -206,6 +206,7 @@ int main() {
         PROGRAM.set_uniform<float>("color_percent", color_percent);
         PROGRAM.set_uniform<float>("n1", n1);
         PROGRAM.set_uniform<float>("n2", n2);
+        PROGRAM.set_uniform<int>("skybox", cubemapTexture);
 
         // MODEL DRAW---------------------------------------
         model1.draw(PROGRAM);
@@ -217,10 +218,11 @@ int main() {
         SKYBOX_SHADER.use();
         SKYBOX_SHADER.set_mat4("view", glm::mat4(glm::mat3(view)));
         SKYBOX_SHADER.set_mat4("projection", projection);
+        SKYBOX_SHADER.set_uniform<int>("skybox", cubemapTexture);
 
         // куб скайбокса
         glBindVertexArray(skyboxVAO);
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0 + cubemapTexture);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);

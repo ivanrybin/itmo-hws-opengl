@@ -34,9 +34,9 @@ namespace my_model {
 
     void mesh::draw(shader_t shader) const {
         for (unsigned int i = 0; i < textures.size(); i++) {
-            glActiveTexture(GL_TEXTURE0 + i); // активируем соответствующий текстурный юнит перед привязкой
+            glActiveTexture(GL_TEXTURE0 + textures[i].id); // активируем соответствующий текстурный юнит перед привязкой
 
-            shader.set_uniform<unsigned int>("texture_" + textures[i].type, i);
+            shader.set_uniform<unsigned int>("texture_" + textures[i].type, textures[i].id);
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
         glActiveTexture(GL_TEXTURE0);

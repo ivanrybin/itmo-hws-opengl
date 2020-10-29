@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(opengl-imgui-sample CXX)
+project(reflection-sample CXX)
 
 set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
@@ -12,7 +12,7 @@ find_package(fmt CONFIG)
 find_package(glm CONFIG)
 find_package(stb CONFIG)
 
-add_executable(opengl-imgui-sample
+add_executable(reflection-sample
                 main.cpp
                 opengl_shader.cpp
                 opengl_shader.h
@@ -35,7 +35,7 @@ add_executable(opengl-imgui-sample
                 assets/reflect_VS.glsl
         )
 
-add_custom_command(TARGET opengl-imgui-sample
+add_custom_command(TARGET reflection-sample
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/assets/reflect_FS.glsl ${PROJECT_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/assets/reflect_VS.glsl ${PROJECT_BINARY_DIR}
@@ -43,5 +43,5 @@ add_custom_command(TARGET opengl-imgui-sample
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/assets/skybox_VS.glsl ${PROJECT_BINARY_DIR}
 )
 
-target_compile_definitions(opengl-imgui-sample PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLEW)
-target_link_libraries(opengl-imgui-sample imgui::imgui GLEW::glew_s glfw::glfw fmt::fmt glm::glm)
+target_compile_definitions(reflection-sample PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLEW)
+target_link_libraries(reflection-sample imgui::imgui GLEW::glew_s glfw::glfw fmt::fmt glm::glm)
