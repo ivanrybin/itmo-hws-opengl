@@ -36,7 +36,7 @@
 // configuration -------------------------------------------------------------------------------------------------------
 
 const unsigned int WIN_WIDTH  = 1280;
-const unsigned int WIN_HEIGHT = 720;
+const unsigned int WIN_HEIGHT =  720;
 
 float FOV = 45.0f;
 
@@ -70,6 +70,8 @@ struct CONFIG {
 
     const std::string BACKPACK_OBJ = "../textures/backpack/backpack.obj";
     const std::string BACKPACK_DIR = "../textures/backpack/";
+
+    const std::string WATER_DUDV = "../textures/water/dudv_map.png";
 
     const std::string LIGHTHOUS_OBJ = "../textures/lighthouse/lighthouse.obj";
     const std::string LIGHTHOUS_DIR = "../textures/lighthouse/";
@@ -288,6 +290,7 @@ int main() {
 
     // WATER ---------------------------
     float WATER_Y = 0.0f;
+    my_model::texture dudv_water(CONF.WATER_DUDV); dudv_water.init();
     my_model::water WATER{}; WATER.init();
     glm::vec4 clipPlane = glm::vec4(0, 0, 0, 0);
 
@@ -381,11 +384,18 @@ int main() {
 
     water_fb frame_buf{};
 
+    float move_waves = 0;
+
+    // LZ-TEST
     //----------------------------------------MAIN LOOP---------------------------------------------------
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         delta_time = currentFrame - last_frame;
         last_frame = currentFrame;
+
+        double dummy = 0;
+        move_waves += delta_time * 0.1;
+        move_waves = (float) std::modf(move_waves, &dummy);
 
         process_input(window);
 
@@ -394,6 +404,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_CLIP_DISTANCE0);
         glEnable(GL_DEPTH_TEST);
+
 
         glm::mat4 view = scene_camera.get_view_matrix();
         glm::mat4 proj = glm::perspective<float>(glm::radians(camera::FOV), (float) WIN_WIDTH / (float) WIN_HEIGHT, 0.1f, 1000.0f);
@@ -427,6 +438,10 @@ int main() {
             WATER_SHADER.set_uniform<int>("reflectionText", frame_buf.reflectionTexture);
             frame_buf.bindRefractionTexture();
             WATER_SHADER.set_uniform<int>("refractionText", frame_buf.refractionTexture);
+            glActiveTexture(GL_TEXTURE0 + dudv_water.id);
+            glBindTexture(GL_TEXTURE_2D, dudv_water.id);
+            WATER_SHADER.set_uniform<int>("dudv_water", dudv_water.id);
+            WATER_SHADER.set_uniform<float>("moveWaves", move_waves);
             WATER_SHADER.set_vec3("cameraPos", glm::vec3(scene_camera.position));
             WATER.draw(WATER_SHADER);
         WATER_SHADER.off();

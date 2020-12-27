@@ -8,8 +8,13 @@ uniform mat4 V;
 uniform mat4 P;
 
 out vec4 clipSpace;
+out vec2 textCoords;
+
+const float tiling = 100;
 
 void main() {
     clipSpace =  P * V * M * vec4(vertexPosition, 1.0);
     gl_Position = clipSpace;
+
+    textCoords = vec2(vertexPosition.x / 2, vertexPosition.z / 2) * tiling;
 }
